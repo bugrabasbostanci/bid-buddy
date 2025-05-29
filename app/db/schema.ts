@@ -1,20 +1,6 @@
 import { boolean, integer, pgTable, primaryKey, serial, text, timestamp } from 'drizzle-orm/pg-core';
 import { AdapterAccountType } from 'next-auth/adapters';
 
-export const bids = pgTable("bb_bids" , {
-    id: serial("id").primaryKey(),
-})
-
-export const items = pgTable("bb_item" , {
-    id: serial("id").primaryKey(),
-    userId: text("userId")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    name: text("name").notNull(),
-    startingPrice: integer("startingPrice").notNull().default(0)
-})
-
-
 export const users = pgTable("bb_user", {
   id: text("id")
     .primaryKey()
@@ -97,3 +83,19 @@ export const authenticators = pgTable(
     },
   ]
 )
+
+export const bids = pgTable("bb_bids" , {
+    id: serial("id").primaryKey(),
+})
+
+export const items = pgTable("bb_item" , {
+    id: serial("id").primaryKey(),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    startingPrice: integer("startingPrice").notNull().default(0),
+    fileKey: text("fileKey").notNull()
+})
+
+export type Item = typeof items.$inferSelect
