@@ -12,7 +12,7 @@ export async function createUploadUrlAction(key: string, type: string) {
 }
 
 
-export async function createItemAction({fileName, name, startingPrice}: {fileName: string, name: string, startingPrice: number}) {
+export async function createItemAction({fileName, name, startingPrice, endDate}: {fileName: string, name: string, startingPrice: number, endDate: Date}) {
     const session = await auth()
 
     if (!session) {
@@ -31,6 +31,7 @@ export async function createItemAction({fileName, name, startingPrice}: {fileNam
         startingPrice,
         fileKey: fileName,
         userId: user.id,
+        endDate,
     })
     redirect("/")
 }

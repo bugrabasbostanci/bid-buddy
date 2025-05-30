@@ -9,6 +9,8 @@ import { createBidAction } from "./actions";
 import { getBidsForItem } from "@/data-access/bids";
 import { getItem } from "@/data-access/items";
 import { auth } from "@/auth";
+import { Badge } from "@/components/ui/badge";
+import { isBidOver } from "@/utils/bids";
 
 
 function formatTimestamp(timestamp: Date) {
@@ -17,10 +19,10 @@ function formatTimestamp(timestamp: Date) {
 
 
 export default async function ItemPage({
-    params: { itemId },
+    params,
 }: {
     params: { itemId: string }
-}) {
+}) {    const itemId = params.itemId
     const item = await getItem(parseInt(itemId))
 
     const session = await auth()
@@ -51,14 +53,20 @@ export default async function ItemPage({
 
     const hasBids = allBids.length > 0
 
-    const canPlaceBid = session && item.userId !== session.user.id
+    const isBiddingOver = isBidOver(item)
+
+    const canPlaceBid = session && item.userId !== session.user.id && !isBidOver(item)
 
     return (
         <main className="space-y-8">
             <div className="flex gap-8">
                 {/* Left side */}
                 <div className="flex flex-col gap-6">
-                    <h1 className={pageTitleStyles}><span className="font-normal">Auction for</span> {item.name}</h1>
+                    <h1 className={pageTitleStyles}><span className="font-normal">Auction for</span>{item.name}</h1>
+
+                    {isBidOver(item) && (
+                        <Badge variant="destructive" className="w-fit">Bidding is Over</Badge>
+                    )}
                     <Image
                         className="rounded-xl"
                         src={getImageUrl(item.fileKey)}
