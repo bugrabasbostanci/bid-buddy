@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm';
 import { boolean, integer, pgTable, primaryKey, serial, text, timestamp } from 'drizzle-orm/pg-core';
 import { AdapterAccountType } from 'next-auth/adapters';
 
@@ -10,7 +11,7 @@ export const users = pgTable("bb_user", {
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
 })
- 
+
 export const accounts = pgTable(
   "bb_account",
   {
@@ -36,7 +37,7 @@ export const accounts = pgTable(
     },
   ]
 )
- 
+
 export const sessions = pgTable("bb_session", {
   sessionToken: text("sessionToken").primaryKey(),
   userId: text("userId")
@@ -44,7 +45,7 @@ export const sessions = pgTable("bb_session", {
     .references(() => users.id, { onDelete: "cascade" }),
   expires: timestamp("expires", { mode: "date" }).notNull(),
 })
- 
+
 export const verificationTokens = pgTable(
   "bb_verificationToken",
   {
@@ -60,7 +61,7 @@ export const verificationTokens = pgTable(
     },
   ]
 )
- 
+
 export const authenticators = pgTable(
   "bb_authenticator",
   {
@@ -84,19 +85,35 @@ export const authenticators = pgTable(
   ]
 )
 
-export const bids = pgTable("bb_bids" , {
-    id: serial("id").primaryKey(),
+export const items = pgTable("bb_item", {
+  id: serial("id").primaryKey(),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  fileKey: text("fileKey").notNull(),
+  currentBid: integer("currentBid").notNull().default(0),
+  startingPrice: integer("startingPrice").notNull().default(0),
+  bidInterval: integer("bidInterval").notNull().default(100)
 })
 
-export const items = pgTable("bb_item" , {
-    id: serial("id").primaryKey(),
-    userId: text("userId")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    name: text("name").notNull(),
-    startingPrice: integer("startingPrice").notNull().default(0),
-    fileKey: text("fileKey").notNull(),
-    bidInterval: integer("bidInterval").notNull().default(100) 
+export const bids = pgTable("bb_bids", {
+  id: serial("id").primaryKey(),
+  amount: integer("amount").notNull(),
+  itemId: integer("itemId")
+    .notNull()
+    .references(() => items.id, { onDelete: "cascade" }),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+    timestamp: timestamp("timestamp", {mode: "date"}).notNull()
 })
+
+export const usersRelations = relations(bids, ({ one }) => ({
+  user: one(users, {
+    fields: [bids.userId],
+    references: [users.id]
+  })
+}))
 
 export type Item = typeof items.$inferSelect
