@@ -54,11 +54,11 @@ export function Header() {
                                 buttonRef={notifButtonRef}
                                 isVisible={isVisible}
                                 onClose={() => setIsVisible(false)}
-                                renderItem={({item, ...props}) => (
-                                    <NotificationCell {...props} item={item}>
+                                renderItem={({ item, ...props }) => (
+                                    <NotificationCell key={item.id} {...props} item={item}>
                                         <div className="rounded-xl">
                                             <Link href={`/items/${item?.data?.itemId}`}
-                                            className="text-blue-400 hover:text-blue-500"
+                                                className="text-blue-400 hover:text-blue-500"
                                             >
                                                 Someone outbided you on <span className="font-bold">{item?.data?.itemName}</span>{" "}
                                                 by $ {formatToDollars(item?.data?.bidAmount)}

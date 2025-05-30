@@ -17,9 +17,10 @@ export function ItemCard({ item }: { item: Item }) {
             <p className="text-lg">starting price: ${formatToDollars(item.startingPrice)}</p>
 
             {isBidOver(item) ? (
-                <p className="text-lg">Ends On: {format(item.endDate, "eeee MM/dd/yy")}</p>
-            ) : (
                 <p className="text-lg">Bidding is Over</p>
+
+            ) : (
+                <p className="text-lg">Ends On: {format(item.endDate, "eeee MM/dd/yy")}</p>
             )}
 
 

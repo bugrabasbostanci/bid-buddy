@@ -80,7 +80,7 @@ export default async function ItemPage({
                             Current Bid{" "} <span className="font-bold">${formatToDollars(item.currentBid)}</span>
                         </div>
                         <div>
-                            Starging Price of{" "} <span className="font-bold">${formatToDollars(item.startingPrice)}</span>
+                            Starting Price of{" "} <span className="font-bold">${formatToDollars(item.startingPrice)}</span>
                         </div>
                         <div
                         >Bid Interval <span className="font-bold">${formatToDollars(item.bidInterval)}</span>
