@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createItemAction, createUploadUrlAction } from "./actions";
+import { pageTitleStyles } from "@/styles";
 
 export default function CreatePage() {
   const handleFormSubmit = async (e: React.FormEvent) => {
@@ -30,8 +31,8 @@ export default function CreatePage() {
   };
 
   return (
-    <main className="container mx-auto py-12 space-y-2">
-      <h1 className="text-4xl font-bold mb-8">
+    <main className="space-y-8">
+      <h1 className={pageTitleStyles}>
         Post an Item
       </h1>
       <form

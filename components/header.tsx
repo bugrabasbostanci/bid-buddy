@@ -7,7 +7,6 @@ import Link from "next/link";
 export async function Header() {
     const session = await auth()
 
-
     return (
         <div className="bg-gray-200 py-4">
             <div className="container mx-auto flex justify-between items-center">
@@ -17,9 +16,17 @@ export async function Header() {
                         BidBuddy.com
                     </Link>
 
-                    <div>
+                    <div className="flex items-center gap-8">
+                        <Link href="/" className="flex items-center gap-1 hover:underline">
+                            All Auctions
+                        </Link>
+
                         <Link href="/items/create" className="flex items-center gap-1 hover:underline">
-                            Auction an Item
+                            Create Auction
+                        </Link>
+
+                        <Link href="/auctions" className="flex items-center gap-1 hover:underline">
+                            My Auctions
                         </Link>
                     </div>
                 </div>

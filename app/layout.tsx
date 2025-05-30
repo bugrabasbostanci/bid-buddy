@@ -25,7 +25,9 @@ export default function RootLayout({
         className={cn("min-h-screen bg-background font-sans antialiased", fontSans.variable)}
       >
         < Header />
-        {children}
+        <div className="container mx-auto py-12">
+          {children}
+        </div>
       </body>
     </html>
   );
