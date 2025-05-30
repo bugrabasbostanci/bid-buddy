@@ -8,6 +8,7 @@ import { formatToDollars } from "@/utils/currency";
 import { createBidAction } from "./actions";
 import { getBidsForItem } from "@/data-access/bids";
 import { getItem } from "@/data-access/items";
+import { auth } from "@/auth";
 
 
 function formatTimestamp(timestamp: Date) {
@@ -21,7 +22,9 @@ export default async function ItemPage({
     params: { itemId: string }
 }) {
     const item = await getItem(parseInt(itemId))
-    
+
+    const session = await auth()
+
 
     if (!item) {
         return (
@@ -47,6 +50,8 @@ export default async function ItemPage({
 
 
     const hasBids = allBids.length > 0
+
+    const canPlaceBid = session && item.userId !== session.user.id
 
     return (
         <main className="space-y-8">
@@ -80,9 +85,11 @@ export default async function ItemPage({
                 <div className="space-y-4 flex-1">
                     <div className="flex justify-between">
                         <h2 className="text-2xl font-bold">Current Bids</h2>
-                        <form action={createBidAction.bind(null, item.id)}>
-                            <Button>Place a Bid</Button>
-                        </form>
+                        {canPlaceBid && (
+                            <form action={createBidAction.bind(null, item.id)}>
+                                <Button>Place a Bid</Button>
+                            </form>
+                        )}
 
                     </div>
 
@@ -105,9 +112,11 @@ export default async function ItemPage({
                         <div className="flex flex-col items-center gap-8 bg-gray-100 rounded-xl p-12">
                             <Image src="/package.svg" alt="Package" width={200} height={200} />
                             <h2 className="text-2xl font-bold">No bids yet</h2>
-                            <form action={createBidAction.bind(null, item.id)}>
-                                <Button>Place a Bid</Button>
-                            </form>
+                            {canPlaceBid && (
+                                <form action={createBidAction.bind(null, item.id)}>
+                                    <Button>Place a Bid</Button>
+                                </form>
+                            )}
                         </div>
                     )}
 

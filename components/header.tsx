@@ -1,11 +1,21 @@
-import { auth } from "@/auth";
-import Image from "next/image";
-import { SignOut } from "./sign-out";
-import SignIn from "./sign-in";
-import Link from "next/link";
+"use client"
 
-export async function Header() {
-    const session = await auth()
+import Image from "next/image";
+import Link from "next/link";
+import { NotificationCell, NotificationFeedPopover, NotificationIconButton } from "@knocklabs/react";
+import { useRef, useState } from "react"
+import { signIn, signOut, useSession } from "next-auth/react";
+import { Button } from "./ui/button";
+import { formatToDollars } from "@/utils/currency";
+
+
+
+export function Header() {
+    const [isVisible, setIsVisible] = useState(false);
+    const notifButtonRef = useRef(null);
+    const session = useSession()
+
+    const userId = session?.data?.user?.id;
 
     return (
         <div className="bg-gray-200 py-4">
@@ -21,20 +31,63 @@ export async function Header() {
                             All Auctions
                         </Link>
 
-                        <Link href="/items/create" className="flex items-center gap-1 hover:underline">
-                            Create Auction
-                        </Link>
+                        {userId && (<>
+                            <Link href="/items/create" className="flex items-center gap-1 hover:underline">
+                                Create Auction
+                            </Link>
 
-                        <Link href="/auctions" className="flex items-center gap-1 hover:underline">
-                            My Auctions
-                        </Link>
+                            <Link href="/auctions" className="flex items-center gap-1 hover:underline">
+                                My Auctions
+                            </Link>
+                        </>)}
                     </div>
                 </div>
 
                 <div className="flex items-center gap-4">
-
-                    <div>{session?.user?.name}</div>
-                    <div className="">{session ? <SignOut /> : <SignIn />}</div>
+                    {userId && (
+                        <>
+                            <NotificationIconButton
+                                ref={notifButtonRef}
+                                onClick={(e) => setIsVisible(!isVisible)}
+                            />
+                            <NotificationFeedPopover
+                                buttonRef={notifButtonRef}
+                                isVisible={isVisible}
+                                onClose={() => setIsVisible(false)}
+                                renderItem={({item, ...props}) => (
+                                    <NotificationCell {...props} item={item}>
+                                        <div className="rounded-xl">
+                                            <Link href={`/items/${item?.data?.itemId}`}
+                                            className="text-blue-400 hover:text-blue-500"
+                                            >
+                                                Someone outbided you on <span className="font-bold">{item?.data?.itemName}</span>{" "}
+                                                by $ {formatToDollars(item?.data?.bidAmount)}
+                                            </Link>
+                                        </div>
+                                    </NotificationCell>
+                                )}
+                            />
+                        </>
+                    )}
+                    {session.data?.user.image && (
+                        <Image
+                            src={session.data?.user.image}
+                            width={40}
+                            height={40}
+                            alt="User Avatar"
+                            className="rounded-md"
+                        />
+                    )}
+                    <div>{session?.data?.user?.name}</div>
+                    <div>{userId ? <Button type="submit"
+                        onClick={() => signOut({
+                            callbackUrl: "/"
+                        })}
+                    >Sign Out</Button> :
+                        <Button type="submit"
+                            onClick={() => signIn()}
+                        >Sign In</Button>
+                    }</div>
                 </div>
             </div>
         </div>
